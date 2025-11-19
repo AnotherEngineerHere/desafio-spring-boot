@@ -7,12 +7,12 @@ Crear una API RESTful utilizando Spring Boot que gestione usuarios y tareas, apl
 
 ## Requisitos Técnicos:
 ### Java:
-- Utiliza Java 17 para la implementación.
-- Utiliza las características de Java 17, como lambdas y streams, cuando sea apropiado.
-- Utilizar Maven como gestor de dependencias
+- Utiliza Java 21 para la implementación.
+- Utiliza las características de Java 21, como lambdas, records y streams, cuando sea apropiado.
+- Utilizar Maven como gestor de dependencias.
 
-### Spring Boot 3.4.x:
-- Construye la aplicación utilizando Spring Boot 3.4.x (última versión disponible).
+### Spring Boot 3.5.x:
+- Construye la aplicación utilizando Spring Boot 3.5.x (última versión disponible).
 
 ### Base de Datos:
 
@@ -30,7 +30,7 @@ Crear una API RESTful utilizando Spring Boot que gestione usuarios y tareas, apl
 
 ### OpenAPI y Swagger:
 
-- Documenta la API utilizando OpenAPI y Swagger.
+- Documenta la API utilizando OpenAPI.
 
 ## Funcionalidades:
 ### Autenticación:
@@ -44,10 +44,10 @@ Crear una API RESTful utilizando Spring Boot que gestione usuarios y tareas, apl
 - Asegúrate de que las operaciones CRUD de tareas solo sean accesibles para usuarios autenticados.
 
 ### Documentación:
-- Utiliza OpenAPI y Swagger para documentar claramente la API.
+- Utiliza OpenAPI 3 para documentar claramente la API.
 - Puntos adicionales si se genera el API mediante metodologia API First. Generar el archivo openapi.yml Nota: Ejemplo Plugin Maven groupId org.openapitools, artifactId openapi-generator-maven-plugin
 
-### Código Limpio:
+### Buenas prácticas:
 - Escribe código ordenado, aplicando buenas prácticas y principios SOLID.
 
 ### Creatividad
@@ -59,14 +59,13 @@ Crear una API RESTful utilizando Spring Boot que gestione usuarios y tareas, apl
 - Todos los PR serán rechazados, no es un indicador de la prueba.
 
 ### Documentación:
-- Incluye instrucciones claras sobre cómo ejecutar y probar la aplicación.
-- **Incluir Json de prueba en un archivo texto o mediante un proyecto postman** Nota: Si no va se restaran puntos de la evaluación
+- Incluye instrucciones claras en un README en formato markdown, sobre cómo ejecutar y probar la aplicación, con ejemplos de requests.
 
 ## Evaluación:
 Se evaluará la solución en función de los siguientes criterios:
 
 - Correcta implementación de las funcionalidades solicitadas.
 - Aplicación de buenas prácticas de desarrollo, patrones de diseño y principios SOLID.
-- Uso adecuado de Java 17, Spring Boot 3.4.x, H2, JWT, OpenAPI y Swagger.
+- Uso adecuado de Java 21, Spring Boot 3.5.x, H2, JWT, OpenAPI.
 - Claridad y completitud de la documentación.
 - **Puntos extras si la generación de la API se realizo mediante API First**
