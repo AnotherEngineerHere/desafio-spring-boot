@@ -1,0 +1,26 @@
+# Build output
+target/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+*.classpath
+*.project
+*.settings/
+
+# Git
+.git/
+.gitignore
+
+# Docs
+*.md
+docs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files (never bake secrets into the image)
+.env
+*.env

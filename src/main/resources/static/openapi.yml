@@ -1,0 +1,424 @@
+openapi: 3.0.3
+info:
+  title: NUEVO SPA - Task Management API
+  description: |
+    API RESTful para la gestión de tareas de NUEVO SPA.
+    Permite crear, actualizar, eliminar y listar tareas con autenticación JWT.
+
+    ## Autenticación
+    Esta API utiliza JWT (JSON Web Token). Para acceder a los endpoints protegidos:
+    1. Llama a `POST /api/auth/token` con tus credenciales.
+    2. Copia el `token` de la respuesta.
+    3. Haz clic en **Authorize** e ingresa: `Bearer <tu-token>`.
+
+    ## Usuarios pre-cargados
+    | Email | Password | Rol |
+    |-------|----------|-----|
+    | admin@nuevospa.cl | admin123 | ADMIN |
+    | juan.perez@nuevospa.cl | user1234 | USER |
+    | maria.gonzalez@nuevospa.cl | user1234 | USER |
+  version: 1.0.0
+  contact:
+    name: NUEVO SPA Development Team
+    email: dev@nuevospa.cl
+
+servers:
+  - url: http://localhost:8080
+    description: Servidor de Desarrollo Local
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Authentication
+    description: Endpoints de autenticación y generación de token JWT
+  - name: Tasks
+    description: Operaciones CRUD para la gestión de tareas
+  - name: TaskStates
+    description: Consulta de estados disponibles para las tareas
+  - name: Users
+    description: Consulta de usuarios del sistema
+
+paths:
+  /api/auth/token:
+    post:
+      tags:
+        - Authentication
+      summary: Obtener token de acceso
+      description: Autentica al usuario con email y contraseña, retornando un token JWT de acceso.
+      operationId: obtenerToken
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              email: admin@nuevospa.cl
+              password: admin123
+      responses:
+        '200':
+          description: Token generado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Credenciales inválidas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/tareas:
+    get:
+      tags:
+        - Tasks
+      summary: Listar tareas
+      description: Retorna la lista de todas las tareas. Opcionalmente puede filtrarse por estado o usuario asignado.
+      operationId: listarTareas
+      parameters:
+        - name: estadoId
+          in: query
+          description: Filtrar por ID de estado de tarea
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: usuarioAsignadoId
+          in: query
+          description: Filtrar por ID de usuario asignado
+          required: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Lista de tareas obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TareaResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags:
+        - Tasks
+      summary: Crear tarea
+      description: Crea una nueva tarea en el sistema.
+      operationId: crearTarea
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TareaRequest'
+      responses:
+        '201':
+          description: Tarea creada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TareaResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/tareas/{id}:
+    get:
+      tags:
+        - Tasks
+      summary: Obtener tarea por ID
+      description: Retorna los detalles de una tarea específica por su ID.
+      operationId: obtenerTarea
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '200':
+          description: Tarea encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TareaResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - Tasks
+      summary: Actualizar tarea
+      description: Actualiza completamente los datos de una tarea existente.
+      operationId: actualizarTarea
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TareaRequest'
+      responses:
+        '200':
+          description: Tarea actualizada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TareaResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+        - Tasks
+      summary: Eliminar tarea
+      description: Elimina permanentemente una tarea del sistema.
+      operationId: eliminarTarea
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '204':
+          description: Tarea eliminada exitosamente
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/estados:
+    get:
+      tags:
+        - TaskStates
+      summary: Listar estados de tarea
+      description: Retorna todos los estados disponibles para las tareas.
+      operationId: listarEstados
+      responses:
+        '200':
+          description: Lista de estados obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EstadoTareaResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/usuarios:
+    get:
+      tags:
+        - Users
+      summary: Listar usuarios
+      description: Retorna la lista de todos los usuarios activos del sistema.
+      operationId: listarUsuarios
+      responses:
+        '200':
+          description: Lista de usuarios obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UsuarioResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Token JWT obtenido desde el endpoint de autenticación
+
+  parameters:
+    IdPath:
+      name: id
+      in: path
+      required: true
+      description: Identificador único del recurso
+      schema:
+        type: integer
+        format: int64
+
+  responses:
+    Unauthorized:
+      description: No autorizado - Token JWT inválido, expirado o ausente
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Recurso no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    BadRequest:
+      description: Solicitud inválida - Datos de entrada incorrectos
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  schemas:
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          description: Correo electrónico del usuario
+          example: admin@nuevospa.cl
+        password:
+          type: string
+          description: Contraseña del usuario
+          example: admin123
+
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: Token JWT de acceso
+        tipo:
+          type: string
+          description: Tipo de token
+          example: Bearer
+        expiracion:
+          type: integer
+          format: int64
+          description: Tiempo de expiración en milisegundos
+        usuario:
+          $ref: '#/components/schemas/UsuarioResponse'
+
+    TareaRequest:
+      type: object
+      required:
+        - titulo
+        - estadoId
+      properties:
+        titulo:
+          type: string
+          maxLength: 200
+          description: Título descriptivo de la tarea
+          example: Implementar módulo de autenticación
+        descripcion:
+          type: string
+          maxLength: 1000
+          description: Descripción detallada de la tarea
+          example: Desarrollar el sistema de login con JWT y Spring Security
+        fechaVencimiento:
+          type: string
+          format: date-time
+          description: Fecha límite para completar la tarea
+          example: "2025-12-31T23:59:59"
+        estadoId:
+          type: integer
+          format: int64
+          description: ID del estado de la tarea
+          example: 1
+        usuarioAsignadoId:
+          type: integer
+          format: int64
+          description: ID del usuario asignado a la tarea (opcional)
+          example: 2
+
+    TareaResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Identificador único de la tarea
+        titulo:
+          type: string
+          description: Título de la tarea
+        descripcion:
+          type: string
+          description: Descripción detallada
+        fechaCreacion:
+          type: string
+          format: date-time
+          description: Fecha y hora de creación
+        fechaActualizacion:
+          type: string
+          format: date-time
+          description: Fecha y hora de última actualización
+        fechaVencimiento:
+          type: string
+          format: date-time
+          description: Fecha límite de la tarea
+        estado:
+          $ref: '#/components/schemas/EstadoTareaResponse'
+        usuarioCreador:
+          $ref: '#/components/schemas/UsuarioResponse'
+        usuarioAsignado:
+          $ref: '#/components/schemas/UsuarioResponse'
+
+    EstadoTareaResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Identificador único del estado
+        nombre:
+          type: string
+          description: Nombre del estado
+          example: PENDIENTE
+        descripcion:
+          type: string
+          description: Descripción del estado
+          example: Tarea pendiente de inicio
+
+    UsuarioResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Identificador único del usuario
+        nombre:
+          type: string
+          description: Nombre completo del usuario
+          example: Administrador Sistema
+        email:
+          type: string
+          description: Correo electrónico del usuario
+          example: admin@nuevospa.cl
+        rol:
+          type: string
+          description: Rol del usuario en el sistema
+          example: ADMIN
+
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Momento en que ocurrió el error
+        status:
+          type: integer
+          description: Código HTTP del error
+        error:
+          type: string
+          description: Tipo de error HTTP
+        mensaje:
+          type: string
+          description: Mensaje descriptivo del error
+        path:
+          type: string
+          description: Ruta del endpoint que generó el error

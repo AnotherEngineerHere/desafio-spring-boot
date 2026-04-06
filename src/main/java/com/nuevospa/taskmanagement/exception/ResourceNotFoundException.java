@@ -1,0 +1,16 @@
+package com.nuevospa.taskmanagement.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class ResourceNotFoundException extends RuntimeException {
+
+    public ResourceNotFoundException(String recurso, Long id) {
+        super(String.format("%s con id %d no encontrado", recurso, id));
+    }
+
+    public ResourceNotFoundException(String mensaje) {
+        super(mensaje);
+    }
+}
