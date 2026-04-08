@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(MAVEN_HOME=\"/c/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/plugins/maven/lib/maven3\" cd \"C:\\\\Users\\\\Andres\\\\Documents\\\\Repositorios\\\\previred-technical-asssment\")",
+      "Bash(\"$MAVEN_HOME/bin/mvn\" test:*)"
+    ]
+  }
+}
